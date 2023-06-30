@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Spring Security Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
+    <script type="text/javascript" src="/js/bootstrap.bundle.min.js" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#" th:text="${user.name + ' with roles: '+ user.rolesToString()}"></a>
+    <a class="btn btn-outline-secondary my-2 my-sm-0" type="button" href="http://localhost:8080/logout">Logout</a>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" th:if="${isAdmin}" href="http://localhost:8080/admin/" role="tab" aria-controls="v-pills-profile" aria-selected="false">Admin</a>
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="http://localhost:8080/" role="tab" aria-controls="v-pills-home" aria-selected="true">User</a>
+            </div>
+        </div>
+        <div class="col-10 offset-md-2"><div>
+            <h1>User information-page</h1>
+            <h4>About user</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">LastName</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Roles</th>
+                </tr>
+                </thead>
+                <tbody id="oneUserBody">
+
+                </tbody>
+                                <tbody>
+                                <tr>
+                                    <td th:text="${user.id}"></td>
+                                    <td th:text="${user.name}"></td>
+                                    <td th:text="${user.lastName}"></td>
+                                    <td th:text="${user.age}"></td>
+                                    <td th:text="${user.rolesToString()}"></td>
+                                </tr>
+                                </tbody>
+            </table>
+        </div></div>
+    </div>
+</div>
+</body>
+</html>

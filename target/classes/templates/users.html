@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
+  <script type="text/javascript" src="/js/bootstrap.bundle.min.js" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#" th:text="${user.name + ' with roles: '+ user.rolesToString()}"></a>
+  <a class="btn btn-outline-secondary my-2 my-sm-0" type="button" href="http://localhost:8080/logout">Logout</a>
+</nav>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-2">
+      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="http://localhost:8080/" role="tab" aria-controls="v-pills-home" aria-selected="true">Admin</a>
+        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="http://localhost:8080/user" role="tab" aria-controls="v-pills-profile" aria-selected="false">User</a>
+      </div>
+    </div>
+    <div class="col-10 offset-md-2"><div>
+      <h1>Admin panel</h1>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Users table</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/add">Add new user</a>
+        </li>
+      </ul>
+      <h4>All users</h4>
+      <table class="table table-striped" id="users">
+        <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">LastName</th>
+          <th scope="col">Age</th>
+          <th scope="col">Password</th>
+          <th scope="col">Roles</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, iterStat : ${users}">
+          <th scope="row" th:text="${user.getId()}"></th>
+          <td th:id="'name_' + ${user.getId()}" th:text="${user.name}"></td>
+          <td th:id="'lastName_' + ${user.getId()}" th:text="${user.lastName}"></td>
+          <td th:id="'age_' + ${user.getId()}" th:text="${user.age}"></td>
+          <td th:id="'password_' + ${user.getId()}" th:text="${user.password}"></td>
+          <td th:id="'roles_' + ${user.getId()}" th:text="${user.rolesToString()}"></td>
+          <td><button type="button" class="btn btn-info" th:onclick="'edit_user('+${user.getId()}+')'">Edit</button></td>
+          <td><button type="button" class="btn btn-danger" th:onclick="'delete_user('+${user.getId()}+')'">Delete</button></td>
+        </tr>
+        </tbody>
+      </table>
+      <!-- Modal -->
+      <div class="modal fade" id="deleteUser" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalTitle"></h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDeleteButton1">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="POST" id="modal_form">
+                    <input type="hidden" name="id" id="id" th:value="${user.id}">
+                    <div class="form-group">
+                      <label path="name">Name</label>
+                      <input name="name" class="form-control" id="name" th:value="${user.name}"/>
+                    </div>
+                    <div class="form-group">
+                      <label path="surname">Surname</label>
+                      <input name="surname" class="form-control" id="surname" th:value="${user.lastName}"/>
+                    </div>
+                    <div class="form-group">
+                      <label path="age">Age</label>
+                      <input name="age" class="form-control" id="age" th:value="${user.age}"/>
+                    </div>
+                    <div class="form-group">
+                      <label path="password">Password</label>
+                      <input name="password" class="form-control" id="password" type="password" th:value="${user.password}"/>
+                    </div>
+                    <div class="form-group">
+                      <label path="roles" for="roles">Role</label>
+                      <select multiple class="form-control" name="roles" id="roles">
+                        <option th:each="role : ${roles}"
+                                th:value="${role.getId()}" th:selected="${user.hasRole(role)}" th:text="${role.getRoleName()}">
+                        </option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeDeleteButton2">Close</button>
+                  <button type="button" class="btn btn-danger" id="modalDeleteButton"></button>
+                </div>
+              </div>
+
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+<script type="text/javascript"> $(document).ready(function () {
+});
+function delete_user(no)
+{
+  document.getElementById("modalTitle").innerHTML = "Delete User";
+  document.getElementById("modalDeleteButton").innerHTML = "Delete";
+  document.getElementById("modalDeleteButton").classList.replace("btn-primary","btn-danger");
+  const modal = new bootstrap.Modal(document.querySelector('#deleteUser'));
+  var closeDeleteButton1 = document.querySelector('#closeDeleteButton1');
+  var closeDeleteButton2 = document.querySelector('#closeDeleteButton2');
+  closeDeleteButton1.addEventListener('click', function (e) {
+    modal.hide();
+  })
+  closeDeleteButton2.addEventListener('click', function (e) {
+    modal.hide();
+  })
+  var name = document.querySelector('#name');
+  var surname = document.querySelector('#surname');
+  var password = document.querySelector('#password');
+  var age = document.querySelector('#age');
+  var roles = document.querySelector('#roles');
+  var modalDeleteButton = document.querySelector('#modalDeleteButton');
+  name.value = document.getElementById("name_"+no).innerText;
+  surname.value=document.getElementById("lastName_"+no).innerText;
+  password.value=document.getElementById("password_"+no).innerText;
+  age.value=document.getElementById("age_"+no).innerText;
+  roles.value=document.getElementById("roles_"+no).innerText;
+  modalDeleteButton.href="/admin/delete?id=" + no;
+  modalDeleteButton.onclick = function (){
+    $.ajax({
+      'url': '/admin/delete',
+      'method': 'GET',
+      'data': {
+        'id': no
+      },
+      error: function (error) {
+        console.log(error)
+      },
+      success: function (response) {
+        window.location.reload();
+        modal.hide();
+      }
+    });
+  }
+  modal.show();
+}
+function edit_user(no)
+{
+  document.getElementById("modalTitle").innerHTML = "Edit User";
+  document.getElementById("modalDeleteButton").innerHTML = "Edit";
+  document.getElementById("modalDeleteButton").classList.replace("btn-danger","btn-primary");
+  const modal = new bootstrap.Modal(document.querySelector('#deleteUser'));
+  var closeDeleteButton1 = document.querySelector('#closeDeleteButton1');
+  var closeDeleteButton2 = document.querySelector('#closeDeleteButton2');
+  closeDeleteButton1.addEventListener('click', function (e) {
+    modal.hide();
+  })
+  closeDeleteButton2.addEventListener('click', function (e) {
+    modal.hide();
+  })
+  var name = document.querySelector('#name');
+  var surname = document.querySelector('#surname');
+  var password = document.querySelector('#password');
+  var age = document.querySelector('#age');
+  var roles = document.querySelector('#roles');
+  var modalDeleteButton = document.querySelector('#modalDeleteButton');
+  var id = document.querySelector('#id');
+  name.value = document.getElementById("name_"+no).innerText;
+  surname.value=document.getElementById("lastName_"+no).innerText;
+  password.value=document.getElementById("password_"+no).innerText;
+  age.value=document.getElementById("age_"+no).innerText;
+  roles.value=document.getElementById("roles_"+no).innerText;
+  id.value = no;
+  const select = document.querySelector('#roles').getElementsByTagName('option');
+  let cur_roles = document.getElementById("roles_"+no).innerText.split(' ');
+
+  for(let i=0;i<select.length;i++){
+    for(let j=0;j<cur_roles.length;j++) {
+      if (select[i].innerText === cur_roles[j]) {
+        select[i].selected = true;
+      }
+    }
+  }
+  modalDeleteButton.onclick = function (){
+    $.ajax({
+      'url': '/admin/edit',
+      'method': 'POST',
+      'data': $('#modal_form').serialize(),
+      error: function (error) {
+        console.log(error)
+      },
+      success: function (response) {
+        window.location.reload();
+        modal.hide();
+      }
+    });
+  }
+  modal.show();
+}</script>
+</body>
+</html>
+
