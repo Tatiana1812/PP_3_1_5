@@ -15,7 +15,7 @@ import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 import java.util.List;
 
 @Controller
-@RequestMapping("api/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     private final UserServiceImp userService;
     private final RoleServiceImp roleService;
@@ -61,9 +61,9 @@ public class AdminController {
 //        userService.update(userService.convertToUser(userDTO));
 //        return ResponseEntity.ok().build();
 //    }
-    @GetMapping()
-    public ResponseEntity<List<Role>> getAllRoles() {
-        List<Role> roles = roleService.getAll();
-        return ResponseEntity.ok().body(roles);
-    }
+//    @GetMapping()
+//    public ResponseEntity<List<Role>> getAllRoles() {
+//        List<Role> roles = roleService.getAll();
+//        return ResponseEntity.ok().body(roles);
+//    }
 }
