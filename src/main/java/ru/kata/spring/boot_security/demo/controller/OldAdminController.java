@@ -51,8 +51,8 @@ public class OldAdminController {
         userService.add(newUser);
         return "redirect:/admin";
     }
-    @DeleteMapping()
-    public String deleteUser(@RequestParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
         userService.delete(userService.getUserById(id));
         return "redirect:/admin";
     }
@@ -64,9 +64,10 @@ public class OldAdminController {
         return "add";
     }
     @PatchMapping()
-    public String editUser(@ModelAttribute("user") User user) {
+    public String updateUser(@ModelAttribute("user") User user, @RequestParam(value = "roles") Long[] roles) {
         userService.update(user);
         return "redirect:/admin";
     }
+
 
 }

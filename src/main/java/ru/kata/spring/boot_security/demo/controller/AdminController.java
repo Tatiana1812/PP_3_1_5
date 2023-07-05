@@ -25,45 +25,29 @@ public class AdminController {
         this.userService = userService;
         this.roleService = roleService;
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(userService.getUserById(id));
+    }
     @GetMapping()
     public ResponseEntity<List<User>> showAllUsers() {
         List<User> users = userService.getAll();
         return ResponseEntity.ok().body(users);
     }
-//    @PostMapping("/add")
-//    public ResponseEntity<HttpStatus> addUser(@RequestBody UserDTO userDTO) {
-//        userService.add(userService.convertToUser(userDTO));
-//        return ResponseEntity.ok().build();
-//    }
     @PostMapping()
     public ResponseEntity<HttpStatus> addUser(@RequestBody User user) {
         userService.add(user);
         return ResponseEntity.ok().build();
     }
-    @DeleteMapping()
-    public ResponseEntity<HttpStatus> deleteUser(@RequestBody User user) {
-        userService.delete(user);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        userService.delete(userService.getUserById(id));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PatchMapping()
     public ResponseEntity<HttpStatus> updateUser(@RequestBody User user) {
         userService.update(user);
         return ResponseEntity.ok().build();
     }
-//    @DeleteMapping(value = "/delete")
-//    public ResponseEntity<HttpStatus> deleteUser(@RequestBody UserDTO userDTO) {
-//        userService.delete(userService.convertToUser(userDTO));
-//        return ResponseEntity.ok().build();
-//    }
-//    @PatchMapping(value = "/edit")
-//    public ResponseEntity<HttpStatus> updateUser(@RequestBody UserDTO userDTO) {
-//        userService.update(userService.convertToUser(userDTO));
-//        return ResponseEntity.ok().build();
-//    }
-//    @GetMapping()
-//    public ResponseEntity<List<Role>> getAllRoles() {
-//        List<Role> roles = roleService.getAll();
-//        return ResponseEntity.ok().body(roles);
-//    }
+
 }

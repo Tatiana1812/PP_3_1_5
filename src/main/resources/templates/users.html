@@ -42,175 +42,122 @@
           <th scope="col">Name</th>
           <th scope="col">LastName</th>
           <th scope="col">Age</th>
-          <th scope="col">Password</th>
           <th scope="col">Roles</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="user, iterStat : ${users}">
-          <th scope="row" th:text="${user.getId()}"></th>
-          <td th:id="'name_' + ${user.getId()}" th:text="${user.name}"></td>
-          <td th:id="'lastName_' + ${user.getId()}" th:text="${user.lastName}"></td>
-          <td th:id="'age_' + ${user.getId()}" th:text="${user.age}"></td>
-          <td th:id="'password_' + ${user.getId()}" th:text="${user.password}"></td>
-          <td th:id="'roles_' + ${user.getId()}" th:text="${user.rolesToString()}"></td>
-          <td><button type="button" class="btn btn-info" th:onclick="'edit_user('+${user.getId()}+')'">Edit</button></td>
-          <td><button type="button" class="btn btn-danger" th:onclick="'delete_user('+${user.getId()}+')'">Delete</button></td>
-        </tr>
+        <tbody id="allUsersBody">
         </tbody>
       </table>
-      <!-- Modal -->
-      <div class="modal fade" id="deleteUser" role="dialog">
+      <!-- Удаление пользователя -->
+      <div class="modal fade" id="deleteModal" tabindex="-1"
+           aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="modalTitle"></h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closeDeleteButton1">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <form method="POST" id="modal_form">
-                    <input type="hidden" name="id" id="id" th:value="${user.id}">
-                    <div class="form-group">
-                      <label path="name">Name</label>
-                      <input name="name" class="form-control" id="name" th:value="${user.name}"/>
-                    </div>
-                    <div class="form-group">
-                      <label path="surname">Surname</label>
-                      <input name="surname" class="form-control" id="surname" th:value="${user.lastName}"/>
-                    </div>
-                    <div class="form-group">
-                      <label path="age">Age</label>
-                      <input name="age" class="form-control" id="age" th:value="${user.age}"/>
-                    </div>
-                    <div class="form-group">
-                      <label path="password">Password</label>
-                      <input name="password" class="form-control" id="password" type="password" th:value="${user.password}"/>
-                    </div>
-                    <div class="form-group">
-                      <label path="roles" for="roles">Role</label>
-                      <select multiple class="form-control" name="roles" id="roles">
-                        <option th:each="role : ${roles}"
-                                th:value="${role.getId()}" th:selected="${user.hasRole(role)}" th:text="${role.getRoleName()}">
-                        </option>
-                      </select>
-                    </div>
-                  </form>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="deleteModalLabel">Delete</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+            </div>
+            <form id="deleteUser">
+              <div class="modal-body col-md text-center">
+                <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
+                  <br>
+                  <label for="idDel"><b>ID</b></label>
+                  <input class="form-control" id="idDel" disabled/>
+                  <br>
+                  <label for="firstNameDel"><b>Name</b></label>
+                  <input class="form-control" id="firstNameDel" disabled/>
+                  <br>
+                  <label for="lastNameDel"><b>Last Name</b></label>
+                  <input class="form-control" id="lastNameDel" disabled/>
+                  <br>
+                  <label for="ageDel"><b>Age</b></label>
+                  <input class="form-control" id="ageDel" disabled/>
+                  <br>
+                  <label for="passwordDel"><b>Password</b></label>
+                  <input type="password" class="form-control" id="passwordDel" disabled/>
+                  <br>
+                  <label for="roles" class="form-label">Role</label>
+                  <select class="form-select" name="rolesDel"
+                          multiple id="rolesDel" size="2" disabled>
+                    <option id="rolesDel1" value="1">USER</option>
+                    <option id="rolesDel2" value="2">ADMIN</option>
+                  </select>
+                  <br><br>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeDeleteButton2">Close</button>
-                  <button type="button" class="btn btn-danger" id="modalDeleteButton"></button>
+                  <button type="submit" class="btn btn-outline-danger">
+                    Delete
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary"
+                          data-bs-dismiss="modal" id="closeDeleteModal">Close
+                  </button>
                 </div>
               </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+      <!-- Редактирование пользователя-->
+      <div class="modal fade" id="editModal" tabindex="-1"
+           aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="editModalLabel">Edit</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+            </div>
+            <form id="editUser">
+              <div class="modal-body col-md text-center">
+                <div class="d-grid gap-2 col-4 mx-auto p-1 text-center">
+                  <br>
+                  <label for="idRed"><b>ID</b></label>
+                  <input class="form-control" id="idRed" name="id" readonly="true"/>
+                  <label for="firstNameRed"><b>First Name</b></label>
+                  <input class="form-control" id="firstNameRed" name="name"/>
+                  <br>
+                  <label for="lastNameRed"><b>Last Name</b></label>
+                  <input class="form-control" id="lastNameRed" name="lastName"/>
+                  <br>
+                  <label for="ageRed"><b>Age</b></label>
+                  <input class="form-control" id="ageRed" name="age"/>
+                  <br>
+                  <label for="passwordRed"><b>Password</b></label>
+                  <input class="form-control" type="password" id="passwordRed" name="password" readonly="true"/>
+                  <br>
+                  <label for="rolesRed" class="form-label">Role</label>
+                  <select class="form-select" multiple name="roles"
+                          id="rolesRed" size="2" required>
+                    <option id="rolesRed1" value="1">USER</option>
+                    <option id="rolesRed2" value="2">ADMIN</option>
+                  </select>
+                  <br><br>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-outline-info">
+                    Edit
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary"
+                          data-bs-dismiss="modal">Close
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
 
         </div>
       </div>
     </div></div>
   </div>
 </div>
-<script type="text/javascript"> $(document).ready(function () {
-});
-function delete_user(no)
-{
-  document.getElementById("modalTitle").innerHTML = "Delete User";
-  document.getElementById("modalDeleteButton").innerHTML = "Delete";
-  document.getElementById("modalDeleteButton").classList.replace("btn-primary","btn-danger");
-  const modal = new bootstrap.Modal(document.querySelector('#deleteUser'));
-  var closeDeleteButton1 = document.querySelector('#closeDeleteButton1');
-  var closeDeleteButton2 = document.querySelector('#closeDeleteButton2');
-  closeDeleteButton1.addEventListener('click', function (e) {
-    modal.hide();
-  })
-  closeDeleteButton2.addEventListener('click', function (e) {
-    modal.hide();
-  })
-  var name = document.querySelector('#name');
-  var surname = document.querySelector('#surname');
-  var password = document.querySelector('#password');
-  var age = document.querySelector('#age');
-  var roles = document.querySelector('#roles');
-  var modalDeleteButton = document.querySelector('#modalDeleteButton');
-  name.value = document.getElementById("name_"+no).innerText;
-  surname.value=document.getElementById("lastName_"+no).innerText;
-  password.value=document.getElementById("password_"+no).innerText;
-  age.value=document.getElementById("age_"+no).innerText;
-  roles.value=document.getElementById("roles_"+no).innerText;
-  modalDeleteButton.href="/admin/delete?id=" + no;
-  modalDeleteButton.onclick = function (){
-    $.ajax({
-      'url': '/admin/delete',
-      'method': 'GET',
-      'data': {
-        'id': no
-      },
-      error: function (error) {
-        console.log(error)
-      },
-      success: function (response) {
-        window.location.reload();
-        modal.hide();
-      }
-    });
-  }
-  modal.show();
-}
-function edit_user(no)
-{
-  document.getElementById("modalTitle").innerHTML = "Edit User";
-  document.getElementById("modalDeleteButton").innerHTML = "Edit";
-  document.getElementById("modalDeleteButton").classList.replace("btn-danger","btn-primary");
-  const modal = new bootstrap.Modal(document.querySelector('#deleteUser'));
-  var closeDeleteButton1 = document.querySelector('#closeDeleteButton1');
-  var closeDeleteButton2 = document.querySelector('#closeDeleteButton2');
-  closeDeleteButton1.addEventListener('click', function (e) {
-    modal.hide();
-  })
-  closeDeleteButton2.addEventListener('click', function (e) {
-    modal.hide();
-  })
-  var name = document.querySelector('#name');
-  var surname = document.querySelector('#surname');
-  var password = document.querySelector('#password');
-  var age = document.querySelector('#age');
-  var roles = document.querySelector('#roles');
-  var modalDeleteButton = document.querySelector('#modalDeleteButton');
-  var id = document.querySelector('#id');
-  name.value = document.getElementById("name_"+no).innerText;
-  surname.value=document.getElementById("lastName_"+no).innerText;
-  password.value=document.getElementById("password_"+no).innerText;
-  age.value=document.getElementById("age_"+no).innerText;
-  roles.value=document.getElementById("roles_"+no).innerText;
-  id.value = no;
-  const select = document.querySelector('#roles').getElementsByTagName('option');
-  let cur_roles = document.getElementById("roles_"+no).innerText.split(' ');
-
-  for(let i=0;i<select.length;i++){
-    for(let j=0;j<cur_roles.length;j++) {
-      if (select[i].innerText === cur_roles[j]) {
-        select[i].selected = true;
-      }
-    }
-  }
-  modalDeleteButton.onclick = function (){
-    $.ajax({
-      'url': '/admin/edit',
-      'method': 'POST',
-      'data': $('#modal_form').serialize(),
-      error: function (error) {
-        console.log(error)
-      },
-      success: function (response) {
-        window.location.reload();
-        modal.hide();
-      }
-    });
-  }
-  modal.show();
-}</script>
+<script type="text/javascript" src="../static/admin.js">
+</script>
 </body>
 </html>
 

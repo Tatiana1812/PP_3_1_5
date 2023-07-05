@@ -9,7 +9,6 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
 import java.security.Principal;
-
 @Controller
 @RequestMapping("/user")
 public class OldUserController {
